@@ -1,4 +1,6 @@
-Class StorageFilterDelegate
+Class StorageFilterDelegate -parameter {
+    {nofilter false}
+}
 
 
 StorageFilterDelegate instproc init {storedOb} {

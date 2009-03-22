@@ -56,28 +56,22 @@ Storage instproc dirtyChecker {args} {
     }
     ::set delegate $::xodb::filterDelegate([self])
 
+    if {[$delegate nofilter]} {
+	return [next]
+    }
+
+    if {[self calledproc] eq "annihilate"} {
+	# Don't catch events during annihilation or the object might 
+	# effectively be recreated!
+	$delegate nofilter true
+	return [next]
+    }
+
     set r [next]
 
     set delegatedProcName "delegated_[self calledproc]"
     if {[$delegate info methods $delegatedProcName] ne ""} {
 	eval [list $delegate $delegatedProcName] $args
-    }
-
-    if {0} {
-    switch -- [self calledproc] {
-	"init" {
-	    #my writeOb
-	    $delegate addChange class [my info class]
-	}
-	"set" {
-	    if {[llength $args] == 2} {
-		$delegate addChange attr [lindex $args 0]
-	    }
-	}
-	"instvar" {
-	    my trace [lindex $args 0] [list read unset] [list [self] varUpdate]
-	}
-    }
     }
 
     if {! $oldFPValue} {

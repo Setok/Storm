@@ -50,8 +50,9 @@ FileStorage instproc init {args} {
 
 
 FileStorage instproc annihilate {} {
-    puts "annihilate, filename: [my set fileName]"
+    next
     file delete [my set fileName]
+    return
 }
 
 
