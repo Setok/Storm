@@ -1,9 +1,14 @@
 set MyDir [file dirname [info script]]
 source [file join $MyDir xodb.tcl]
-source [file join $MyDir FileStorage.tcl]
+#source [file join $MyDir FileStorage.tcl]
+source [file join $MyDir SqliteStorage.tcl]
 
 
-PersistentClass Person -superclass FileStorage
+#FileStorage initStorage
+SqliteStorage initStorage
+
+#PersistentClass Person -superclass FileStorage
+PersistentClass Person -superclass SqliteStorage
 
 
 Person instproc init {name} {

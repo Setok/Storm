@@ -8,14 +8,16 @@ FileStorage set ObjectPath [file join ~ .xodb objects]
 file mkdir [FileStorage set ObjectPath]
 
 
-FileStorage proc createObFromPath {path} {
+FileStorage proc recreateObFromID {id} {
+    set fileID [string map {: ง} $cmdName]
+    set path [file join [my set ObjectPath] $fileID]]
+
     set file [open $path r]
     set data [read $file]
     close $file
     
     set fileName [file tail $path]
-    set obName [string map {ยง :} $fileName]
-    set ob [Object create $obName]
+    set ob [Object create $id]
 
     foreach attr $data {
 	switch -- [lindex $attr 0] {
@@ -43,7 +45,7 @@ FileStorage proc loadAll {} {
 
 
 FileStorage instproc init {args} {
-    set fileID [string map {: ยง} [self]]
+    set fileID [string map {: ง} [self]]
     my set fileName [file join [FileStorage set ObjectPath] $fileID]
     return [next]
 }
@@ -76,21 +78,8 @@ FileStorage instproc writeChanges {} {
     return
 }
 
+Storage registerStorageClass FileStorage
 
-## Provides the facility to load an object from a file, if not already
-## loaded.
-
-override unknown {cmdName args} {
-    if {[string match "::xodb*" $cmdName]} {
-
-	set fileID [string map {: ยง} $cmdName]
-	set ob [FileStorage createObFromPath \
-		    [file join [FileStorage set ObjectPath] $fileID]]
-	return [eval [list $ob] $args]
-    } else {
-	eval $nextproc [list $cmdName] $args
-    }
-}
 
 
 

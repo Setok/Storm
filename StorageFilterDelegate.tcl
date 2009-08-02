@@ -55,6 +55,11 @@ StorageFilterDelegate instproc addChange {type args} {
 }
 
 
+StorageFilterDelegate instproc getAttrChanges {} {
+    return [my array get attrChanges]
+}
+
+
 StorageFilterDelegate instproc emptyChangeList {} {
     my unset attrChanges
     return

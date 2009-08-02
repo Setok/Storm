@@ -3,7 +3,6 @@ package require XOTcl 1.2
 namespace import xotcl::*
 
 set MyDir [file dirname [info script]]
-source [file join $MyDir Storage.tcl]
 
 
 #rename unknown unknown_prev
@@ -25,6 +24,9 @@ proc override {cmdName argList body} {
     incr NextOverrideID($cmdName)
     return $r
 }
+
+
+source [file join $MyDir Storage.tcl]
 
 
 Class PersistentClass -superclass Class 

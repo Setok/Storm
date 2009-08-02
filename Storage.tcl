@@ -2,24 +2,88 @@ source [file join $MyDir StorageFilterDelegate.tcl]
 
 Class Storage
 
-
-Storage instproc init {args} {
-    my set filterProcessing false
-    return [next]
-}
-
-
-@ Storage abstract instproc writeOb {} {
+@ Class Storage {
     description {
-	Storage implementors should implement this method and store the
-	object based on its content in whatever storage they use.
+	This is the base class that all storage providers should extend
+	to provide storage functionality.
+
+	Classes that should be stored should be created from the 
+	PersistentClass meta-class and extend an implementation of this
+	class.
     }
 }
 
 
+# The list of classes which implement storage.
+Storage set storageClasses [list]
+
+
+Storage instproc init {args} {
+#    my set filterProcessing false
+    return [next]
+}
+
+
+@ Storage proc initStorage {} {
+    description {
+	This should be the first method called on a class implementing
+	Storage. This allows it to set up things in preparation for actual
+	storage, if necessary. Each Storage subclass should implement it's
+	own version of this, if it needs to do initialisation.
+    }
+}
+
+Storage proc initStorage {} {
+    return
+}
+
+
+@ Storage proc registerStorageClass {class} {
+    description {
+	Each new Storage sub-class should call this to register itself
+	as providing storage. It can then later be called to try and
+	retreive an unknown object (which would have been previously 
+	stored).
+    }
+}
+
+Storage proc registerStorageClass {class} {
+    my lappend storageClasses $class
+    return
+}
+
+
+@ Storage proc getStorageClasses {} {
+    description {
+	Return list of all registered storage provider classes.
+    }
+}
+
+Storage proc getStorageClasses {} {
+    return [my set storageClasses]
+}
+
+
+@ Storage abstract proc recreateObFromID {id} {
+    description {
+	Every sub-class of Storage should implement this. This is the method
+	to recreate an XOTcl object based on tha name or id of the original
+	object (the XOTcl name of the object). The Storage class should
+	search its own storage for an object which matches the given id.
+	It should then create it and set its fields and metadata.
+
+	If an object with that id cannot be found from the class's storage,
+	an empty string should be returned.
+    }
+}
+
+Storage abstract proc recreateObFromID {id}
+
+
 Storage instproc writeChanges {} {
     next
-    my emptyChangeList
+    set delegate $::xodb::filterDelegate([self])
+    $delegate emptyChangeList
 }
 
 
@@ -89,14 +153,18 @@ Storage instproc dirtyChecker {args} {
 
 
 Storage instproc hasChanges {} {
-    if {[my exists attrChanges]} {
-	return true
-    } else {
-	return false
-    }
+    set delegate $::xodb::filterDelegate([self])
+    return [$delegate hasChanges]
 }
 
 
+Storage instproc getAttrChanges {} {
+    set delegate $::xodb::filterDelegate([self])
+    return [$delegate getAttrChanges]
+}
+
+
+if {0} {
 Storage instproc addChange {type args} {
     my instvar attrChanges relationChanges
 
@@ -112,7 +180,7 @@ Storage instproc addChange {type args} {
 
 
 Storage instproc emptyChangeList {} {
-    my unset attrChanges
+    catch {my unset attrChanges}
     return
 }
 
@@ -129,3 +197,23 @@ Storage instproc varUpdate {name1 name2 op} {
     }
     return
 }
+}
+
+## Provides the facility to load an object from a file, if not already
+## loaded.
+
+override unknown {cmdName args} {
+    if {[string match "::xodb*" $cmdName]} {
+	foreach class [Storage getStorageClasses] {
+	    set ob [$class recreateObFromID $cmdName]
+	    if {$ob ne ""} {
+		return [eval [list $ob] $args]
+	    }
+	}
+	# None of the Storage classes could recreate this object.
+	return [eval $nextproc [list $cmdName] $args]
+    } else {
+	return [eval $nextproc [list $cmdName] $args]
+    }
+}
+
