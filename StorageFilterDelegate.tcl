@@ -1,3 +1,18 @@
+@ Class StorageFilterDelegate -parameter {
+    {nofilter false} {If this is set, no filtering will be done.}
+} {
+    description {
+	This class should handle any methods which need to be filtered by the
+	storage system. Any method on the stored object that needs to 
+	trigger a 'dirty' state, or any other extra functionality, should
+	be managed by a method here that is named delegated_<methodname>.
+	This delegate should also be used to keep note of any changes
+	that were made.
+
+	This is to keep the filter code clean.
+    }
+}
+
 Class StorageFilterDelegate -parameter {
     {nofilter false}
 }
