@@ -21,7 +21,7 @@ Person instproc annihilate {} {
     my instvar friend
 
     if {[info exists friend]} {
-	[my set friend] annihilate
+	$friend annihilate
     }
 
     return [next]
@@ -45,7 +45,10 @@ $ob print
 puts "Friend: [$ob set friend]"
 [$ob set friend] print
 
+gets stdin
+
 $ob annihilate
+$ob print
 #set instances [TestClass info instances]
 #puts [TestClass info instances]
 #[lindex $instances 0] print
