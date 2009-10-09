@@ -81,16 +81,10 @@ SqliteStorage instproc init {args} {
 SqliteStorage instproc annihilate {} {
     [self class] instvar sqlite_db
 
-    puts "annihilate"
     set me [self]
-    puts "Me: $me"
     $sqlite_db eval {
 	DELETE FROM fields WHERE object=$me;
 	DELETE FROM metadata WHERE object=$me;
-    }
-
-    $sqlite_db eval {
-	DELETE FROM fields WHERE object="::xodb::1255027646-0";
     }
 
     return [next]

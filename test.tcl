@@ -45,9 +45,8 @@ $ob print
 puts "Friend: [$ob set friend]"
 [$ob set friend] print
 
-gets stdin
-
 $ob annihilate
+puts "Should fail:"
 $ob print
 #set instances [TestClass info instances]
 #puts [TestClass info instances]
