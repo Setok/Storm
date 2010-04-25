@@ -1,4 +1,4 @@
-source [file join $MyDir StorageFilterDelegate.tcl]
+source [file join $xodb::myDir StorageFilterDelegate.tcl]
 
 Class Storage
 
@@ -79,6 +79,7 @@ Storage proc getStorageClasses {} {
 
 Storage abstract proc recreateObFromID {id}
 
+Storage abstract proc searchObjects {expr}
 
 Storage instproc writeChanges {} {
     next
@@ -111,6 +112,7 @@ Storage instproc annihilate {} {
 }
 
 Storage instproc dirtyChecker {args} {
+    ::puts "dirtyChecker"
     ::set oldFPValue [::info exists ::xodb::filterProcessing([self])]
     #set oldFPValue [my set filterProcessing]
     ::set ::xodb::filterProcessing([self]) true

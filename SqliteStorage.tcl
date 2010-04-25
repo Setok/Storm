@@ -23,6 +23,12 @@ SqliteStorage set dbName "default.db"
 SqliteStorage set nextDbID 0
 
 
+@ SqliteStorage proc initStorage {} {
+    description {
+	Call this after you have set dbName and other configuration.
+    }
+}
+
 SqliteStorage proc initStorage {} {
     my instvar nextDbID dbPath dbName sqlite_db
 
@@ -61,6 +67,27 @@ SqliteStorage proc recreateObFromID {id} {
 }
 
 
+SqliteStorage proc searchClassObjects {class expr} {
+    my instvar sqlite_db
+
+    puts "expr: $expr"
+
+    set op [lindex $expr 0]
+
+    set query ""
+    switch -- $op {
+	eq {
+	    set query "SELECT metadata.object FROM fields,metadata WHERE fields.object=metadata.object AND fields.key='[lindex $expr 1]' AND fields.value='[lindex $expr 2]' AND metadata.key='class' AND metadata.value = '$class'"
+	}
+    }	    
+
+    puts "query: $query"
+    set r [$sqlite_db eval $query]
+    puts "r: $r"
+    return $r
+}
+
+
 SqliteStorage instproc init {args} {
     [self class] instvar sqlite_db
 
@@ -94,7 +121,6 @@ SqliteStorage instproc annihilate {} {
 SqliteStorage instproc writeChanges {} {
     [self class] instvar sqlite_db
 
-    puts writeChanges
     foreach {attr op} [my getAttrChanges] {
 	set value [my set $attr]
 	set me [self]

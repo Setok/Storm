@@ -94,6 +94,12 @@ StorageFilterDelegate instproc delegated_set {args} {
 }
 
 
+StorageFilterDelegate instproc delegated_lappend {args} {
+    my addChange attr [lindex $args 0]
+    return
+}
+
+
 StorageFilterDelegate instproc delegated_instvar {args} {
     [my set storedOb] trace add variable [lindex $args 0] [list read unset] \
 	[list [self] varUpdate]
