@@ -70,8 +70,6 @@ SqliteStorage proc recreateObFromID {id} {
 SqliteStorage proc searchClassObjects {class expr} {
     my instvar sqlite_db
 
-    puts "expr: $expr"
-
     set op [lindex $expr 0]
 
     set query ""

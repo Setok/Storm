@@ -68,7 +68,6 @@ PersistentClass instproc searchObjects {expr} {
 	if {[Storage info subclass $superClass]} {
 	    set objects [concat $objects \
 			     [$superClass searchClassObjects [self] $expr]]
-	    puts "objects: $objects"
 	}
     }
 

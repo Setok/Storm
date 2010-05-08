@@ -112,7 +112,6 @@ Storage instproc annihilate {} {
 }
 
 Storage instproc dirtyChecker {args} {
-    ::puts "dirtyChecker"
     ::set oldFPValue [::info exists ::xodb::filterProcessing([self])]
     #set oldFPValue [my set filterProcessing]
     ::set ::xodb::filterProcessing([self]) true
