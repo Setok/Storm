@@ -1,10 +1,10 @@
 @ Class FileStorage -superclass Storage {
-    Implements file-based storage for XODB
+    Implements file-based storage for Storm
 }
 
 Class FileStorage -superclass Storage
 
-FileStorage set ObjectPath [file join ~ .xodb objects]
+FileStorage set ObjectPath [file join ~ .storm objects]
 file mkdir [FileStorage set ObjectPath]
 
 

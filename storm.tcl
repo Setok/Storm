@@ -1,12 +1,13 @@
 package require Tcl 8.4
 package require XOTcl 1.2
-namespace import xotcl::*
+catch {namespace import xotcl::*}
 
+package provide storm 0.1
 
 
 #rename unknown unknown_prev
 
-namespace eval xodb {
+namespace eval storm {
     set myDir [file dirname [info script]]
 
     # Number to ensure no conflict if lots of obs created on same second.
@@ -33,7 +34,7 @@ proc override {cmdName argList body} {
 }
 
 
-source [file join $xodb::myDir Storage.tcl]
+source [file join $storm::myDir Storage.tcl]
 
 
 Class PersistentClass -superclass Class 
@@ -50,9 +51,9 @@ PersistentClass instproc init {} {
 }
 
 PersistentClass instproc new {args} {
-    #my instvar childNum
-    set name ::xodb::[clock seconds]-$::xodb::obNum    
-    incr ::xodb::obNum
+    #my instvar Childnum
+    set name ::storm::[clock seconds]-$::storm::obNum    
+    incr ::storm::obNum
     return [eval [list my create $name] $args]
 }
 

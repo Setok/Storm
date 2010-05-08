@@ -1,7 +1,12 @@
 set MyDir [file dirname [info script]]
-source [file join $MyDir xodb.tcl]
+lappend auto_path $MyDir
+
+package require storm 0.1
+package require storm::sqliteStorage 0.1
+
+#source [file join $MyDir storm.tcl]
 #source [file join $MyDir FileStorage.tcl]
-source [file join $MyDir SqliteStorage.tcl]
+#source [file join $MyDir SqliteStorage.tcl]
 
 
 #FileStorage initStorage

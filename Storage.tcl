@@ -1,4 +1,4 @@
-source [file join $xodb::myDir StorageFilterDelegate.tcl]
+source [file join $storm::myDir StorageFilterDelegate.tcl]
 
 Class Storage
 
@@ -83,7 +83,7 @@ Storage abstract proc searchObjects {expr}
 
 Storage instproc writeChanges {} {
     next
-    set delegate $::xodb::filterDelegate([self])
+    set delegate $::storm::filterDelegate([self])
     $delegate emptyChangeList
 }
 
@@ -112,14 +112,14 @@ Storage instproc annihilate {} {
 }
 
 Storage instproc dirtyChecker {args} {
-    ::set oldFPValue [::info exists ::xodb::filterProcessing([self])]
+    ::set oldFPValue [::info exists ::storm::filterProcessing([self])]
     #set oldFPValue [my set filterProcessing]
-    ::set ::xodb::filterProcessing([self]) true
+    ::set ::storm::filterProcessing([self]) true
     #my set filterProcessing true
-    if {! [::info exists ::xodb::filterDelegate([self])]} {
-	::set ::xodb::filterDelegate([self]) [StorageFilterDelegate new [self]]
+    if {! [::info exists ::storm::filterDelegate([self])]} {
+	::set ::storm::filterDelegate([self]) [StorageFilterDelegate new [self]]
     }
-    ::set delegate $::xodb::filterDelegate([self])
+    ::set delegate $::storm::filterDelegate([self])
 
     if {[$delegate nofilter]} {
 	return [next]
@@ -146,7 +146,7 @@ Storage instproc dirtyChecker {args} {
 	if {[$delegate hasChanges]} {
 	    my writeChanges
 	}
-	::unset ::xodb::filterProcessing([self])
+	::unset ::storm::filterProcessing([self])
     }
 
     return $r
@@ -154,13 +154,13 @@ Storage instproc dirtyChecker {args} {
 
 
 Storage instproc hasChanges {} {
-    set delegate $::xodb::filterDelegate([self])
+    set delegate $::storm::filterDelegate([self])
     return [$delegate hasChanges]
 }
 
 
 Storage instproc getAttrChanges {} {
-    set delegate $::xodb::filterDelegate([self])
+    set delegate $::storm::filterDelegate([self])
     return [$delegate getAttrChanges]
 }
 
@@ -204,7 +204,7 @@ Storage instproc varUpdate {name1 name2 op} {
 ## loaded.
 
 override unknown {cmdName args} {
-    if {[string match "::xodb*" $cmdName]} {
+    if {[string match "::storm*" $cmdName]} {
 	foreach class [Storage getStorageClasses] {
 	    set ob [$class recreateObFromID $cmdName]
 	    if {$ob ne ""} {

@@ -1,4 +1,7 @@
 package require sqlite3
+package require storm 0.1
+
+package provide storm::sqliteStorage 0.1
 
 
 @ Class SqliteStorage -superclass Storage {
@@ -7,7 +10,7 @@ package require sqlite3
 
 Class SqliteStorage -superclass Storage
 
-SqliteStorage set dbPath [file join ~ .xodb sqlite]
+SqliteStorage set dbPath [file join ~ .storm sqlite]
 file mkdir [SqliteStorage set dbPath]
 
 @ SqliteStorage set dbName "default.db" {
@@ -32,7 +35,7 @@ SqliteStorage set nextDbID 0
 SqliteStorage proc initStorage {} {
     my instvar nextDbID dbPath dbName sqlite_db
 
-    set sqlite_db "xodbsqlitedb-$nextDbID"
+    set sqlite_db "stormsqlitedb-$nextDbID"
     sqlite3 $sqlite_db [file join $dbPath $dbName]
     # Create the metadata and field tables, if needed.
     # Metadata will be for metadata about the object (class, filters, procs)
