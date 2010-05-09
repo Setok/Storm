@@ -162,9 +162,7 @@ SqliteStorage proc searchClassObjects {class expr} {
     set query "SELECT metadata.object FROM fields,metadata WHERE fields.object=metadata.object $expr AND metadata.key='class' AND metadata.value = '$class' $ordering"
     }
 
-    puts "query: [$query getQuery]"
     set r [$sqlite_db eval [$query getQuery]]
-    puts "r: $r"
     return $r
 }
 
