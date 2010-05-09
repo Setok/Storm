@@ -4,6 +4,47 @@ package require storm 0.1
 package provide storm::sqliteStorage 0.1
 
 
+Class SqlQuery -parameter {
+    operation
+    {distinct false}
+    what
+    from
+    ordering
+    
+}
+
+
+SqlQuery instproc init {} {
+    my set conditions [list]
+}
+
+
+SqlQuery instproc addCondition {condition} {
+    my lappend conditions $condition
+}
+
+
+SqlQuery instproc getQuery {} {
+    my instvar operation distinct what from conditions ordering
+    
+    set query "$operation"
+    if {$distinct} {
+	append query " DISTINCT"
+    }
+    append query " $what FROM $from"
+    set conditionPrefix " WHERE "
+    foreach condition $conditions {
+	append query $conditionPrefix $condition
+	set conditionPrefix " AND "
+    }
+    if {[info exist ordering]} {
+	append query " ORDER BY " $ordering
+    }
+
+    return $query
+}
+
+
 @ Class SqliteStorage -superclass Storage {
     Implements storage based on an SQLite DB.
 }
@@ -37,6 +78,8 @@ SqliteStorage proc initStorage {} {
 
     set sqlite_db "stormsqlitedb-$nextDbID"
     sqlite3 $sqlite_db [file join $dbPath $dbName]
+    $sqlite_db timeout 2000
+
     # Create the metadata and field tables, if needed.
     # Metadata will be for metadata about the object (class, filters, procs)
     # Fields will be for the instance variables of the object
@@ -70,20 +113,57 @@ SqliteStorage proc recreateObFromID {id} {
 }
 
 
+SqliteStorage proc parseExpression {queryOb expr} {
+    set op [lindex $expr 0]
+
+    switch -- $op {
+	last {
+	    $queryOb ordering "metadata.rowid DESC LIMIT [lindex $expr 1]"
+	    if {[llength $expr] == 2} {
+		my parseExpression $queryOb [lindex $expr 2]
+	    }
+	}
+	eq {
+	    $queryOb addCondition \
+		"fields.key='[lindex $expr 1]'\
+                 AND fields.value='[lindex $expr 2]'"
+	}
+    }	    
+}
+
+    
 SqliteStorage proc searchClassObjects {class expr} {
     my instvar sqlite_db
 
     set op [lindex $expr 0]
 
-    set query ""
+    #set query ""
+    set ordering ""
+    set query [SqlQuery new -volatile]
+    $query operation "SELECT"
+    $query what "metadata.object"
+    $query from "fields,metadata"
+    $query addCondition "fields.object=metadata.object AND metadata.key='class' AND metadata.value = '$class'"
+    $query distinct true
+
+    my parseExpression $query $expr
+    
+    if {0} {
     switch -- $op {
+	last {
+	    set ordering "ORDER BY rowid DESC LIMIT [lindex $expr 1]"
+	}
 	eq {
-	    set query "SELECT metadata.object FROM fields,metadata WHERE fields.object=metadata.object AND fields.key='[lindex $expr 1]' AND fields.value='[lindex $expr 2]' AND metadata.key='class' AND metadata.value = '$class'"
+	    set expr "AND fields.key='[lindex $expr 1]' AND fields.value='[lindex $expr 2]'"
+
 	}
     }	    
 
-    puts "query: $query"
-    set r [$sqlite_db eval $query]
+    set query "SELECT metadata.object FROM fields,metadata WHERE fields.object=metadata.object $expr AND metadata.key='class' AND metadata.value = '$class' $ordering"
+    }
+
+    puts "query: [$query getQuery]"
+    set r [$sqlite_db eval [$query getQuery]]
     puts "r: $r"
     return $r
 }

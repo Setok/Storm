@@ -42,6 +42,9 @@ set ob [Person new "Peter"]
 set ob2 [Person new "Jane"]
 $ob set friend $ob2
 
+set ppl [Person searchObjects {eq name "Peter"}]
+puts "Query response: $ppl"
+
 #loadAll
 
 $ob2 destroy
