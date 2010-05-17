@@ -1,0 +1,22 @@
+This is a unique queryable and transparent storage system for XOTcl
+with various storage backends. Getting the balance between relational 
+databases and object models is often tedious and error-prone. Storm takes
+the approach that it is enough to just mark the class which you want to
+store, and the system will take care of the rest. Storm automatically writes
+changes to the storage, and automatically restores objects which have been
+referred to, without the programmer needing to care. There is also
+limited support for querying objects belonging to a specific class, based on
+various criteria.
+
+The programmer can mostly not care about what happens. Only using querying 
+if needed. The only thing they should be aware of is that if they wish
+the object to be totally destroyed (both from memory, and storage), the
+should call the [objName annihilate] method, instead of [objName destroy].
+
+[objName destroy] can be used to remove objects from memory. They will
+automatically be brought back into memory if required.
+
+Currently there are two backends: FileStorage (does not support querying)
+and SqliteStorage.
+
+See test.tcl for some simple examples.

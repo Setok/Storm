@@ -5,6 +5,28 @@ catch {namespace import xotcl::*}
 package provide storm 0.1
 
 
+@ @File { 
+    description { 
+
+	This is a transparent object storage system. Classes created
+	from the PersistentClass meta-class will be automatically stored
+	into the selected storage system. Additionally any references to
+	objects not yet loaded will get loaded from the storage. You can
+	thus freely destroy objects to retain memory or exit the app
+	completely.  Objects will be automatically returned if needed,
+	without the programmer knowing the details.
+
+	To completely destroy an object, from both memory and storage,
+	use [ob annihilate] instead of destroy.
+
+	There is also a query language for querying the objects of a certain
+	class, based on various criteria.
+
+	You should also load the storage model you want to use. 
+	Currently available: FileStorage and SqliteStorage.
+    }
+}
+
 #rename unknown unknown_prev
 
 namespace eval storm {
@@ -17,6 +39,9 @@ namespace eval storm {
 }
 
 
+
+## Override an existing command with a new body. The body can call
+## $nextproc to call the original command.
 
 proc override {cmdName argList body} {
     global NextOverrideID
