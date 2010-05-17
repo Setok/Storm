@@ -20,3 +20,16 @@ Currently there are two backends: FileStorage (does not support querying)
 and SqliteStorage.
 
 See test.tcl for some simple examples.
+
+Note that this is not even beta, but early alpha. While what is there works,
+anything can change. It is released for fellow developers to experiment
+with and to submit changes.
+
+You are free to use the source in any way you please, without announcing to
+the authors or anyone else. Of course credit where due is appreciated (but
+not required).
+
+
+Author:
+
+Kristoffer Lawson, setok@scred.com
