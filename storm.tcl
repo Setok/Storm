@@ -83,6 +83,30 @@ PersistentClass instproc new {args} {
 }
 
 
+PersistentClass instproc allObjects {} {
+    set objects [list]
+
+    # Go through each superclass of this class to see which storage
+    # classes it has.
+    foreach superClass [my info superclass] {
+	# This is for compatible between older and newer versions of
+	# XOTcl. The interface for [subclass] was changed.
+	set subClassResult [Storage info subclass $superClass]
+	if {$subClassResult eq ""} {
+	    set subClassResult false
+	} elseif {![string is boolean $subClassResult]} {
+	    set subClassResult true
+	}
+
+	if {$subClassResult} {
+	    set objects [concat $objects \
+			     [$superClass allObjects [self]]]
+	}
+    }
+
+    return $objects
+}
+
 PersistentClass instproc searchObjects {expr} {
     set objects [list]
 

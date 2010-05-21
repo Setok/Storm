@@ -131,6 +131,19 @@ SqliteStorage proc parseExpression {queryOb expr} {
     }	    
 }
 
+
+SqliteStorage proc allObjects {class} {
+    my instvar sqlite_db
+
+    set query [SqlQuery new -volatile]
+    $query operation "SELECT"
+    $query what "fields.object"
+    $query from "fields"
+
+    set r [$sqlite_db eval [$query getQuery]]
+    return $r
+}
+
     
 SqliteStorage proc searchClassObjects {class expr} {
     my instvar sqlite_db

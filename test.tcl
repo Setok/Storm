@@ -45,6 +45,8 @@ $ob set friend $ob2
 set ppl [Person searchObjects {eq name "Peter"}]
 puts "Query response: $ppl"
 
+set ppl [Person allObjects]
+puts "All people: $ppl"
 #loadAll
 
 $ob2 destroy

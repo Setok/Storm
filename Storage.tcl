@@ -67,7 +67,7 @@ Storage proc getStorageClasses {} {
 @ Storage abstract proc recreateObFromID {id} {
     description {
 	Every sub-class of Storage should implement this. This is the method
-	to recreate an XOTcl object based on tha name or id of the original
+	to recreate an XOTcl object based on the name or id of the original
 	object (the XOTcl name of the object). The Storage class should
 	search its own storage for an object which matches the given id.
 	It should then create it and set its fields and metadata.
