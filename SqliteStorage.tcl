@@ -138,7 +138,10 @@ SqliteStorage proc allObjects {class} {
     set query [SqlQuery new -volatile]
     $query operation "SELECT"
     $query what "fields.object"
-    $query from "fields"
+    $query what "metadata.object"
+    $query from "fields,metadata"
+    $query addCondition "fields.object=metadata.object AND metadata.key='class' AND metadata.value = '$class'"
+    $query distinct true
 
     set r [$sqlite_db eval [$query getQuery]]
     return $r
