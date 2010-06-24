@@ -1,7 +1,7 @@
 package require sqlite3
 package require storm 0.1
 
-package provide storm::sqliteStorage 0.1
+package provide storm::sqliteStorage 0.1.1
 
 
 Class SqlQuery -parameter {
@@ -85,9 +85,11 @@ SqliteStorage proc initStorage {} {
     # Fields will be for the instance variables of the object
     catch {$sqlite_db eval {
 	CREATE TABLE metadata(object text, key text, value text)
+	CREATE INDEX IDX_METADATA_OBJECT ON metadata (object);
     }}
     catch {$sqlite_db eval {
 	CREATE TABLE fields(object text, key text, value text)
+	CREATE INDEX IDX_FIELDS_OBJECT ON fields (object);
     }}
 }
     
