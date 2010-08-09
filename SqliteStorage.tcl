@@ -52,7 +52,7 @@ SqlQuery instproc getQuery {} {
 Class SqliteStorage -superclass Storage
 
 SqliteStorage set dbPath [file join ~ .storm sqlite]
-file mkdir [SqliteStorage set dbPath]
+
 
 @ SqliteStorage set dbName "default.db" {
     description {
@@ -75,6 +75,8 @@ SqliteStorage set nextDbID 0
 
 SqliteStorage proc initStorage {} {
     my instvar nextDbID dbPath dbName sqlite_db
+
+    file mkdir [SqliteStorage set dbPath]
 
     set sqlite_db "stormsqlitedb-$nextDbID"
     sqlite3 $sqlite_db [file join $dbPath $dbName]
