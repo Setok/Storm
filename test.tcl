@@ -55,6 +55,14 @@ $ob print
 puts "Friend: [$ob set friend]"
 [$ob set friend] print
 
+puts "Test with parameters:"
+PersistentClass Car -superclass SqliteStorage -parameter marque
+
+set newCar [Car new]
+$newCar marque "Caterham"
+$newCar destroy
+puts "Car marque: [$newCar marque]"
+
 $ob annihilate
 puts "Should fail:"
 $ob print

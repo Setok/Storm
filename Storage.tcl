@@ -108,6 +108,9 @@ Storage instproc annihilate {} {
 	lead to the object being 'dirty' -- ie. requiring it to be saved
 	to the store. Basically any method that changes the object should
 	result in a dirty condition.
+
+	TODO: Check if this could be done with mixins. If yes, should be 
+	way less messy and possibly quicker too.
     }
 }
 
@@ -134,9 +137,20 @@ Storage instproc dirtyChecker {args} {
 
     set r [next]
 
-    set delegatedProcName "delegated_[self calledproc]"
-    if {[$delegate info methods $delegatedProcName] ne ""} {
-	eval [list $delegate $delegatedProcName] $args
+    set targetclass [my info class]
+    if { ([$targetclass info instparametercmd [self calledproc]] eq \
+	      [self calledproc]) &&
+	 ([llength $args] > 0) } {	
+	# If a parameter command was accessed for setting a variable, mark
+	# as dirty.
+	$delegate addChange attr [self calledproc]
+    } else {
+	# Otherwise check with the delegated implementation of the command
+	# to see if it thinks the result is dirty.
+	set delegatedProcName "delegated_[self calledproc]"
+	if {[$delegate info methods $delegatedProcName] ne ""} {
+	    eval [list $delegate $delegatedProcName] $args
+	}
     }
 
     if {! $oldFPValue} {
