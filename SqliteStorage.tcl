@@ -86,11 +86,11 @@ SqliteStorage proc initStorage {} {
     # Metadata will be for metadata about the object (class, filters, procs)
     # Fields will be for the instance variables of the object
     catch {$sqlite_db eval {
-	CREATE TABLE metadata(object text, key text, value text)
+	CREATE TABLE metadata(object text, key text, value text);
 	CREATE INDEX IDX_METADATA_OBJECT ON metadata (object);
     }}
     catch {$sqlite_db eval {
-	CREATE TABLE fields(object text, key text, value text)
+	CREATE TABLE fields(object text, key text, value text);
 	CREATE INDEX IDX_FIELDS_OBJECT ON fields (object);
     }}
 }

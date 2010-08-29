@@ -116,11 +116,10 @@ Storage instproc annihilate {} {
 
 Storage instproc dirtyChecker {args} {
     ::set oldFPValue [::info exists ::storm::filterProcessing([self])]
-    #set oldFPValue [my set filterProcessing]
     ::set ::storm::filterProcessing([self]) true
-    #my set filterProcessing true
     if {! [::info exists ::storm::filterDelegate([self])]} {
-	::set ::storm::filterDelegate([self]) [StorageFilterDelegate new [self]]
+	::set ::storm::filterDelegate([self]) \
+	    [StorageFilterDelegate new -childof [self] [self]]
     }
     ::set delegate $::storm::filterDelegate([self])
 
@@ -135,9 +134,13 @@ Storage instproc dirtyChecker {args} {
 	return [next]
     }
 
-    set r [next]
+    ::set targetclass [my info class]
+    ::set r [next]
 
-    set targetclass [my info class]
+    #::puts "errorcode: $::errorCode"
+    #::puts "errorinfo: $::errorInfo"
+    #puts "rc: $rc"
+    
     if { ([$targetclass info instparametercmd [self calledproc]] eq \
 	      [self calledproc]) &&
 	 ([llength $args] > 0) } {	
