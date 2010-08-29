@@ -107,6 +107,26 @@ PersistentClass instproc allObjects {} {
     return $objects
 }
 
+
+@ PersistentClass instproc searchObjects {
+    expr {
+	  Search expression.
+
+	  Expression format:
+	  op arg1 arg2 ...
+
+	  ops:
+
+	  last <num> <expr> - Return last 'num' that match expression.
+	  eq <field> <value> - Return obs where field == value.
+      }
+} {
+    description {
+	Return all the objects that match the given expression from
+	whichever class 'searchObjects' was called.
+    }
+}
+
 PersistentClass instproc searchObjects {expr} {
     set objects [list]
 
