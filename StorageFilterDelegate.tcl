@@ -24,6 +24,12 @@ StorageFilterDelegate instproc init {storedOb} {
 }
 
 
+StorageFilterDelegate instproc destroy {} {
+    unset ::storm::filterDelegate([my set storedOb])
+    return [next]
+}
+
+
 StorageFilterDelegate instproc hasChanges {} {
     my instvar attrChanges
     if {[my exists attrChanges]} {

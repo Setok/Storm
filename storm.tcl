@@ -2,7 +2,7 @@ package require Tcl 8.4
 package require XOTcl 1.2
 catch {namespace import xotcl::*}
 
-package provide storm 0.2
+package provide storm 0.2.1
 
 
 @ @File { 
