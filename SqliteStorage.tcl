@@ -1,7 +1,7 @@
 package require sqlite3
 package require storm 0.1
 
-package provide storm::sqliteStorage 0.1.1
+package provide storm::sqliteStorage 0.2
 
 
 Class SqlQuery -parameter {
@@ -51,8 +51,18 @@ SqlQuery instproc getQuery {} {
 
 Class SqliteStorage -superclass Storage
 
-SqliteStorage set dbPath [file join ~ .storm sqlite]
+SqliteStorage set dbLocation [file join ~ .storm sqlite]
 
+
+@ SqliteStorage set appNamespace {
+    description {
+        Set this with a list of elements that define the application
+        namespace. This could be a combination of company and division like,
+        for instance, "solu web".
+    }
+}
+
+SqliteStorage set appNamespace [list]
 
 @ SqliteStorage set dbName "default.db" {
     description {
@@ -74,9 +84,10 @@ SqliteStorage set nextDbID 0
 }
 
 SqliteStorage proc initStorage {} {
-    my instvar nextDbID dbPath dbName sqlite_db
-
-    file mkdir [SqliteStorage set dbPath]
+    my instvar nextDbID dbLocation appNamespace dbName sqlite_db
+    
+    set dbPath [eval file join [list $dbLocation] $appNamespace]
+    file mkdir $dbPath
 
     set sqlite_db "stormsqlitedb-$nextDbID"
     sqlite3 $sqlite_db [file join $dbPath $dbName]
