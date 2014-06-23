@@ -115,8 +115,15 @@ Storage instproc annihilate {} {
 }
 
 Storage instproc dirtyChecker {args} {
-    ::set oldFPValue [::info exists ::storm::filterProcessing([self])]
-    ::set ::storm::filterProcessing([self]) true
+    if {[self calledproc] ne "destroy"} {
+        # Normally we postpone writing changes until the completion of the
+        # first method of this object being called on the stack. However,
+        # if that method is [destroy] we do not want to wait that long as
+        # the object will cease to exist after the full [next] chain, so
+        # changes should be made before that happens.
+        ::set oldFPValue [::info exists ::storm::filterProcessing([self])]
+        ::set ::storm::filterProcessing([self]) true
+    }
     if {! [::info exists ::storm::filterDelegate([self])]} {
 	::set ::storm::filterDelegate([self]) \
 	    [StorageFilterDelegate new -childof [self] [self]]
@@ -141,6 +148,17 @@ Storage instproc dirtyChecker {args} {
     #::puts "errorinfo: $::errorInfo"
     #puts "rc: $rc"
     
+    if {[self calledproc] eq "destroy"} {
+        # We know destroy itself is not dirty (the methods it called might
+        # have been), ie. nothing needs to be written (as [destroy] was
+        # ignored for the normal 'write-when-method-stack-complete' logic). 
+        # However if we don't
+        # check for it here, all of the below will cease to work. If it
+        # is destroy, do nothing further and return.
+
+        return $r
+    }
+
     if { ([$targetclass info instparametercmd [self calledproc]] eq \
 	      [self calledproc]) &&
 	 ([llength $args] > 0) } {	

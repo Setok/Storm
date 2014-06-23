@@ -1,8 +1,8 @@
 set MyDir [file dirname [info script]]
 lappend auto_path $MyDir
 
-package require storm 0.1
-package require storm::sqliteStorage 0.1
+package require storm 0.2
+package require storm::sqliteStorage 0.2
 
 #source [file join $MyDir storm.tcl]
 #source [file join $MyDir FileStorage.tcl]
@@ -10,6 +10,8 @@ package require storm::sqliteStorage 0.1
 
 
 #FileStorage initStorage
+SqliteStorage set dbName basic-test.db
+SqliteStorage set appNamespace [list storm-test]
 SqliteStorage initStorage
 
 #PersistentClass Person -superclass FileStorage
@@ -39,6 +41,9 @@ Person instproc print {} {
 
 
 set ob [Person new "Peter"]
+puts "Created person (should be Peter):"
+$ob print
+$ob destroy
 set ob2 [Person new "Jane"]
 $ob set friend $ob2
 

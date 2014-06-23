@@ -1,8 +1,8 @@
 set MyDir [file dirname [info script]]
 lappend auto_path $MyDir
 
-package require storm 0.1
-package require storm::sqliteStorage 0.1
+package require storm 0.2
+package require storm::sqliteStorage 0.2
 
 #source [file join $MyDir storm.tcl]
 #source [file join $MyDir FileStorage.tcl]
@@ -10,7 +10,7 @@ package require storm::sqliteStorage 0.1
 
 
 SqliteStorage set appNamespace [list storm-test]
-SqliteStorage set dbName test.db
+SqliteStorage set dbName namespace-test.db
 
 #FileStorage initStorage
 SqliteStorage initStorage
