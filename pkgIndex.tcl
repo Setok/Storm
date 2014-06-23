@@ -9,4 +9,4 @@
 # full path name of this file's directory.
 
 package ifneeded storm 0.2.1 [list source [file join $dir storm.tcl]]
-package ifneeded storm::sqliteStorage 0.1.1 [list source [file join $dir SqliteStorage.tcl]]
+package ifneeded storm::sqliteStorage 0.2 [list source [file join $dir SqliteStorage.tcl]]
